@@ -49,17 +49,21 @@ public class Player : MonoBehaviour {
 
                 if (m_lightPool <= 0) //player is dead
                 {
-                    if (!m_canBecomeGhost)
-                    {
+                    Debug.Log("Lightpool less than 0");
                         m_state = PlayerState.dead;
                         //TODO: refactor scene management into the persistent data object
                         //SceneManager.LoadScene("NEW INTRO SCENE");
-                    }
+                        transform.rotation.Set(90.0f, 0.0f, 0.0f, 1.0f);
+                        transform.position = Vector3.MoveTowards(transform.position, GameObject.Find("DeathMoveTowardsObject").transform.position, 0.0f);
+
+                    
                 }
             }
         }
         else if (m_state == PlayerState.dead) //decide what happens here, coroutine??
         {
+            transform.rotation.Set(90.0f, 0.0f, 0.0f, 1.0f);
+            transform.position = Vector3.MoveTowards(transform.position, GameObject.Find("DeathMoveTowardsObject").transform.position, 0.0f);
 
         }
     }
