@@ -100,6 +100,21 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // always move along the camera forward as it is the direction that it being aimed at
             Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
 
+            //Walk Button from Oliver
+
+            if(Input.GetKeyDown(KeyCode.C))
+            {
+                m_WalkSpeed = 1.0f;
+            }
+
+            if(Input.GetKeyUp(KeyCode.C))
+            {
+                m_WalkSpeed = 5.0f;
+            }
+
+
+
+
             // get a normal for the surface that is being touched to move along it
             RaycastHit hitInfo;
             Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
@@ -113,14 +128,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (m_CharacterController.isGrounded)
             {
                 m_MoveDir.y = -m_StickToGroundForce;
-
-                if (m_Jump)
-                {
-                    m_MoveDir.y = m_JumpSpeed;
-                    PlayJumpSound();
-                    m_Jump = false;
-                    m_Jumping = true;
-                }
             }
             else
             {

@@ -10,6 +10,8 @@ public class Beacon : Photon.PunBehaviour {
     private float m_lightToActivate;
     private bool m_isActive = false;
 
+    private int m_PlayersClose = 0;
+
     public GameObject m_monolith;
 
     #endregion
@@ -29,13 +31,23 @@ public class Beacon : Photon.PunBehaviour {
 
         if (other.tag == "Player")
         {
-            if (other.GetComponent<Player>() != null && other.GetComponent<Player>().m_lightPool > m_lightToActivate && !m_isActive)
+            m_PlayersClose++;
+            if (other.GetComponent<Player>() != null && other.GetComponent<Player>().m_lightPool > m_lightToActivate && !m_isActive && m_PlayersClose >= 2)
             {
                 other.GetComponent<Player>().m_lightPool -= m_lightToActivate;
                 photonView.RPC("Activate", PhotonTargets.All);
             }
         }
 	}
+
+    void OnTriggerExit(Collider other)
+    {
+        m_PlayersClose--;   
+    }
+
+
+
+
     [PunRPC]
     void Activate()
     {
