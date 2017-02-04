@@ -3,16 +3,19 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
+public enum PlayerState { alive, dead }
+
 public class Player : MonoBehaviour {
 
     #region member variables
 
+    public float m_lightPool;
+    public PlayerState m_state = PlayerState.alive;
+
 
     private PersistentData m_pData;
-    public float m_lightPool;
     private float m_lightConsumption;
     private bool m_canBecomeGhost;
-
     private GameObject m_remLight;
     private Text m_remainingLightNumber;
 
@@ -34,20 +37,29 @@ public class Player : MonoBehaviour {
     void Update ()
     {
         m_remainingLightNumber.text = m_lightPool.ToString();
-        if (GetComponent<CharacterController>().velocity != Vector3.zero)
+
+        if (m_state == PlayerState.alive)
         {
-            m_lightPool -= Time.deltaTime * m_lightConsumption;
-            UpdateLight();
-
-            m_remainingLightNumber.text = m_lightPool.ToString();
-
-            if (m_lightPool <= 0)
+            if (GetComponent<CharacterController>().velocity != Vector3.zero)
             {
-                if (!m_canBecomeGhost)
+                m_lightPool -= Time.deltaTime * m_lightConsumption;
+                UpdateLight();
+
+                m_remainingLightNumber.text = m_lightPool.ToString();
+
+                if (m_lightPool <= 0) //player is dead
                 {
-                    SceneManager.LoadScene("NEW INTRO SCENE");
+                    if (!m_canBecomeGhost)
+                    {
+                        m_state = PlayerState.dead;
+                        //SceneManager.LoadScene("NEW INTRO SCENE");
+                    }
                 }
             }
+        }
+        else if (m_state == PlayerState.dead) //decide what happens here, coroutine??
+        {
+
         }
     }
 
