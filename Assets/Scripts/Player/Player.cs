@@ -52,6 +52,7 @@ public class Player : MonoBehaviour {
                     if (!m_canBecomeGhost)
                     {
                         m_state = PlayerState.dead;
+                        //TODO: refactor scene management into the persistent data object
                         //SceneManager.LoadScene("NEW INTRO SCENE");
                     }
                 }

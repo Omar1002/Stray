@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
-using System;
 using System.IO;
-using System.Text;
-using System.Collections.Generic;
 
 using YamlDotNet.RepresentationModel;
 
@@ -30,10 +28,19 @@ public class PersistentData : MonoBehaviour {
     //monolyth
     public float m_timeToEndLevel;
 
+    //screen fader
+    private GameObject m_screenFaderAsset;
+    private ScreenFader m_fader;
+
     #endregion
 
     void Awake ()
     {
+        //add delegate listener to the scene changed event  from SceneManager
+        SceneManager.activeSceneChanged += SceneChanged;
+
+        m_screenFaderAsset = Resources.Load("ScreenFaderPrefab") as GameObject;
+
         //load all the various settings from the YAML file
         StringReader input = new StringReader(System.IO.File.ReadAllText(m_file));
 
@@ -87,8 +94,28 @@ public class PersistentData : MonoBehaviour {
         }
     }
 
-	void Update ()
+	void Start()
     {
-	    
-	}
+        DontDestroyOnLoad(this.gameObject);
+        if (!FindObjectOfType<ScreenFader>())
+            Instantiate(m_screenFaderAsset);
+    }
+
+    void SceneChanged(Scene previosScene, Scene newScene)
+    {
+        Instantiate(m_screenFaderAsset);
+        FindObjectOfType<ScreenFader>().FadeIn();
+    }
+
+    public void ChangeToScene(string scene)
+    {
+        StartCoroutine(ChangeSceneCO(scene));
+        FindObjectOfType<ScreenFader>().FadeOut();
+    }
+
+    IEnumerator ChangeSceneCO(string scene)
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(scene);
+    }
 }

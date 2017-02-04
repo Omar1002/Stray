@@ -5,26 +5,30 @@ using System.Collections;
 
 public class IntroSceneManagerScript : MonoBehaviour {
 
-	// Use this for initialization
-	void Start ()
-    {
-	
-	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-	
-	}
+    #region member variables
 
+    private GameObject m_pData;
+
+    #endregion
+
+    // Use this for initialization
+    void Start ()
+    {
+	    if (!GameObject.Find("PersistentDataGO"))
+        {
+            m_pData = new GameObject("PersistentDataGO");
+            m_pData.AddComponent<PersistentData>();
+        }
+	}
+	
     public void OnPlayClicked()
     {
-        SceneManager.LoadScene("ArtProto"); 
+        m_pData.GetComponent<PersistentData>().ChangeToScene("NewArtProtoScene"); 
     }
 
     public void OnOptionsClicked()
     {
-        SceneManager.LoadScene("OptionsScene");
+        m_pData.GetComponent<PersistentData>().ChangeToScene("OptionsScene");
     }
 
     public void OnQuitClicked()
