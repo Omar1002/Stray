@@ -68,7 +68,7 @@ public class Player : MonoBehaviour {
                 // Need to remove player arm.                                                                 
                 GameObject.Find("1stPerson_Char").SetActive(false); //Functioning.
 
-                transform.rotation.Set(90.0f, 0.0f, 0.0f, 1.0f);
+                transform.rotation = Quaternion.Euler(90, 0, 0);
 
                 test = false;
             }
