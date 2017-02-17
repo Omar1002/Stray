@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public enum PlayerState { alive, dead }
 
@@ -12,18 +13,20 @@ public class Player : MonoBehaviour {
     public float m_lightPool;
     public PlayerState m_state = PlayerState.alive;
 
-
     private PersistentData m_pData;
     private float m_lightConsumption;
     private bool m_canBecomeGhost;
     private GameObject m_remLight;
     private Text m_remainingLightNumber;
 
+    private bool test = true; //Used for player death in Update()
     #endregion
 
     void Start ()
     {
         m_pData = (PersistentData)FindObjectOfType(typeof(PersistentData));
+
+       
 
         m_lightPool = m_pData.m_playerLightPool;
         m_lightConsumption = m_pData.m_playerLightConsumption;
@@ -51,19 +54,27 @@ public class Player : MonoBehaviour {
                 {
                     Debug.Log("Lightpool less than 0");
                         m_state = PlayerState.dead;
-                        //TODO: refactor scene management into the persistent data object
-                        //SceneManager.LoadScene("NEW INTRO SCENE");
-                        transform.rotation.Set(90.0f, 0.0f, 0.0f, 1.0f);
-                        transform.position = Vector3.MoveTowards(transform.position, GameObject.Find("DeathMoveTowardsObject").transform.position, 0.0f);
-
                     
                 }
             }
         }
-        else if (m_state == PlayerState.dead) //decide what happens here, coroutine??
+        if (m_state == PlayerState.dead) //decide what happens here, coroutine??
         {
-            transform.rotation.Set(90.0f, 0.0f, 0.0f, 1.0f);
-            transform.position = Vector3.MoveTowards(transform.position, GameObject.Find("DeathMoveTowardsObject").transform.position, 0.0f);
+            if(test)
+            {
+                //Stop the player from controlling avatar.
+                gameObject.GetComponent<FirstPersonController>().enabled = false; //FUNCTIONING
+
+                // Need to remove player arm.                                                                 
+                GameObject.Find("1stPerson_Char").SetActive(false); //Functioning.
+
+                transform.rotation.Set(90.0f, 0.0f, 0.0f, 1.0f);
+
+                test = false;
+            }
+            
+
+            transform.position = Vector3.MoveTowards(transform.position, GameObject.Find("DeathMoveTowardsObject").transform.position, 1.0f);
 
         }
     }
