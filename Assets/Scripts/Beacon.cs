@@ -32,8 +32,10 @@ public class Beacon : Photon.PunBehaviour {
         if (other.tag == "Player")
         {
             m_PlayersClose++;
-            if (other.GetComponent<Player>() != null && other.GetComponent<Player>().m_lightPool > m_lightToActivate && !m_isActive && m_PlayersClose >= 2)
+            Debug.Log("Number of players close is: " + m_PlayersClose.ToString());
+            if (other.GetComponent<Player>() != null && other.GetComponent<Player>().m_lightPool > m_lightToActivate && !m_isActive && m_PlayersClose >= 6)
             {
+                Debug.Log("Entered teh if loop inside if other player tag");
                 other.GetComponent<Player>().m_lightPool -= m_lightToActivate;
                 photonView.RPC("Activate", PhotonTargets.All);
             }
@@ -42,7 +44,10 @@ public class Beacon : Photon.PunBehaviour {
 
     void OnTriggerExit(Collider other)
     {
-        m_PlayersClose--;   
+        if (other.tag == "Player")
+        {
+            m_PlayersClose--;
+        }
     }
 
 

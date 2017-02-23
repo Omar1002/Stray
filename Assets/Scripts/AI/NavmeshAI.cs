@@ -13,7 +13,7 @@ public class NavmeshAI : MonoBehaviour {
     {
         /// TODO: sync position of npc across network
         m_currentGoal = m_beacon;
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         agent.destination = m_currentGoal.position;
     }
 	
@@ -27,7 +27,7 @@ public class NavmeshAI : MonoBehaviour {
         {
             m_currentGoal = m_beacon;
         }
-        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         agent.destination = m_currentGoal.position;
     }
 }
