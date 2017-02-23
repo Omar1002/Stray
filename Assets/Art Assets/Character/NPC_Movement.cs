@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(UnityEngine.AI.NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 public class LocomotionSimpleAgent : MonoBehaviour
 {
     Animator anim;
-    NavMeshAgent agent;
+    UnityEngine.AI.NavMeshAgent agent;
     Vector2 smoothDeltaPosition = Vector2.zero;
     Vector2 velocity = Vector2.zero;
 
     void Start()
     {
         anim = GetComponent<Animator>();
-        agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         // Don’t update position automatically
         agent.updatePosition = false;
     }
