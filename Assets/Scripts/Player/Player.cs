@@ -28,7 +28,7 @@ public class Player : MonoBehaviour {
     {
         m_pData = (PersistentData)FindObjectOfType(typeof(PersistentData));
 
-       
+        gameObject.name = "Player";
 
         m_lightPool = m_pData.m_playerLightPool;
         m_lightConsumption = m_pData.m_playerLightConsumption;
