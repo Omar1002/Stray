@@ -182,10 +182,15 @@ public class PortalManager : MonoBehaviour {
 			GateCamRepos ();
 		#endif
 	}
-	void FixedUpdate () {
+
+
+	void FixedUpdate ()
+    {
 		SetGate ();
 	}
-	void LateUpdate () {
+
+	void LateUpdate ()
+    {
 		GateCamRepos ();
 	}
 
