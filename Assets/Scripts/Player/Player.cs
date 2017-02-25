@@ -10,6 +10,8 @@ public class Player : MonoBehaviour {
 
     #region member variables
 
+    public bool m_hasReceivedLightFromFire = false;
+
     public float m_lightPool;
     public PlayerState m_state = PlayerState.alive;
 
