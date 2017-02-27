@@ -121,11 +121,11 @@ public class StrayPortalManager : MonoBehaviour
 
     void OnEnable()
     {
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         RenTex = new RenderTexture[2];
-#else
+        #else
 			RenTex = new RenderTexture[1];
-#endif
+        #endif
         GateMaterial = new Material[RenTex.Length];
         CurrentProjectionResolution = new Vector2[RenTex.Length];
         ViewSettings.Projection.CurrentDepthQuality = new ViewSettingsClass.ProjectionClass.DepthQualityEnum[RenTex.Length];
@@ -207,16 +207,16 @@ public class StrayPortalManager : MonoBehaviour
             if (transform.GetComponentsInChildren<Transform>()[l].name == transform.name + " ClipPlanePosObj")
                 ClipPlanePosObj = transform.GetComponentsInChildren<Transform>()[l].gameObject;
         }
-#endif
+        #endif
     }
 
     void Update()
     {
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         SetGate();
 
         GateCamRepos();
-#endif
+        #endif
     }
 
 
@@ -264,7 +264,7 @@ public class StrayPortalManager : MonoBehaviour
                     {
                         if (RenTex[i])
                         {
-#if UNITY_EDITOR
+                        #if UNITY_EDITOR
                             if (!EditorApplication.isPlaying)
                             {
                                 DestroyImmediate(RenTex[i], false);
@@ -279,12 +279,12 @@ public class StrayPortalManager : MonoBehaviour
                                 if (i == 0)
                                     Destroy(TempRenTex);
                             }
-#else
+                            #else
 								Destroy (RenTex [i]);
 
 								if (i == 0)
 									Destroy (TempRenTex);
-#endif
+                            #endif
                         }
                         if (!RenTex[i])
                         {
@@ -299,7 +299,7 @@ public class StrayPortalManager : MonoBehaviour
                     }
                 }
 
-#if UNITY_EDITOR
+                #if UNITY_EDITOR
                 LayerMask SceneTabLayerMask = Tools.visibleLayers;
 
                 SceneTabLayerMask &= ~(1 << 1); //Disable SceneviewRender layer on Sceneview
@@ -335,7 +335,7 @@ public class StrayPortalManager : MonoBehaviour
                     if (GateMaterial.Length > 1)
                         SceneviewRender.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex", InGameCamera && ConnectedPortal.GetComponent<StrayPortalManager>().RenTex[1] ? ConnectedPortal.GetComponent<StrayPortalManager>().RenTex[1] : null);
                 }
-#endif
+                #endif
 
                 //Apply render texture to the game portal material
                 if (GateMaterial.Length > 0)
@@ -391,14 +391,14 @@ public class StrayPortalManager : MonoBehaviour
                     }
                     else
                     {
-#if UNITY_EDITOR
+                    #if UNITY_EDITOR
                         if (!EditorApplication.isPlaying)
                             DestroyImmediate(GateCamObjs[j], false);
                         if (EditorApplication.isPlaying)
                             Destroy(GateCamObjs[j]);
-#else
+                    #else
 							Destroy (GateCamObjs [j]);
-#endif
+                    #endif
                     }
                 }
 
@@ -454,9 +454,9 @@ public class StrayPortalManager : MonoBehaviour
                             //Move portal camera to position/rotation of Scene/Game camera
                             Camera SceneCamera = null;
 
-#if UNITY_EDITOR
+                            #if UNITY_EDITOR
                             SceneCamera = SceneView.GetAllSceneCameras().Length > 0 ? SceneView.GetAllSceneCameras()[0] : null;
-#endif
+                            #endif
 
                             GateCamObjs[j].GetComponent<Camera>().aspect = (i == 1 && SceneCamera ? SceneCamera.aspect : InGameCamera.aspect);
                             GateCamObjs[j].GetComponent<Camera>().fieldOfView = (i == 1 && SceneCamera ? SceneCamera.fieldOfView : InGameCamera.fieldOfView);
@@ -756,14 +756,14 @@ public class StrayPortalManager : MonoBehaviour
 
                                         if (!ConnectedPortalSkybox)
                                         {
-#if UNITY_EDITOR
+                                            #if UNITY_EDITOR
                                             if (!EditorApplication.isPlaying)
                                                 DestroyImmediate(ObjCloneCollidedCamObj[ObjCloneCollidedCamObj[1] ? 1 : 0].GetComponent<Skybox>(), false);
                                             if (EditorApplication.isPlaying)
                                                 Destroy(ObjCloneCollidedCamObj[ObjCloneCollidedCamObj[1] ? 1 : 0].GetComponent<Skybox>());
-#else
+                                            #else
 												Destroy (ObjCloneCollidedCamObj [ObjCloneCollidedCamObj [1] ? 1 : 0].GetComponent<Skybox> ());
-#endif
+                                            #endif
                                         }
                                     }
 
