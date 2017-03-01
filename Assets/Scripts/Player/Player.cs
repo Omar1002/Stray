@@ -22,6 +22,9 @@ public class Player : MonoBehaviour {
     private Text m_remainingLightNumber;
 
     private bool test = true; //Used for player death in Update()
+
+    public bool m_isInThornBush = false;
+    public bool m_isInRiver = false;
     #endregion
 
     void Start ()
@@ -45,7 +48,7 @@ public class Player : MonoBehaviour {
 
         if (m_state == PlayerState.alive)
         {
-            if (GetComponent<CharacterController>().velocity != Vector3.zero)
+            if (GetComponent<CharacterController>().velocity != Vector3.zero && m_isInRiver == false && m_isInThornBush == false)
             {
                 m_lightPool -= Time.deltaTime * m_lightConsumption;
                 UpdateLight();
@@ -54,9 +57,33 @@ public class Player : MonoBehaviour {
 
                 if (m_lightPool <= 0) //player is dead
                 {
-                    Debug.Log("Lightpool less than 0");
-                        m_state = PlayerState.dead;
-                    
+                        m_state = PlayerState.dead;   
+                }
+            }
+
+            if (GetComponent<CharacterController>().velocity != Vector3.zero && m_isInThornBush == true)
+            {
+                m_lightPool -= Time.deltaTime * m_lightConsumption * 1.25f;//1.25 is the 25% increase.
+                UpdateLight();
+
+                m_remainingLightNumber.text = m_lightPool.ToString();
+
+                if (m_lightPool <= 0) //player is dead
+                {
+                    m_state = PlayerState.dead;
+                }
+            }
+
+            if (GetComponent<CharacterController>().velocity != Vector3.zero && m_isInRiver == true)
+            {
+                m_lightPool -= Time.deltaTime * m_lightConsumption * 2.0f;
+                UpdateLight();
+
+                m_remainingLightNumber.text = m_lightPool.ToString();
+
+                if (m_lightPool <= 0) //player is dead
+                {
+                    m_state = PlayerState.dead;
                 }
             }
         }
