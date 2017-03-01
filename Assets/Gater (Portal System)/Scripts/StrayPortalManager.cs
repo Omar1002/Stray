@@ -234,13 +234,25 @@ public class StrayPortalManager : MonoBehaviour
     private RenderTexture TempRenTex;
     private Mesh GateMesh;
 
+    void GateNotFound()
+    {
+        print("could not find gate, double check your portal connections");
+        this.gameObject.SetActive(false);
+    }
+
     void SetGate()
     {
-        if (!ConnectedPortal || ConnectedPortal.GetComponent<StrayPortalManager>().ConnectedPortal != gameObject)
+        if (!ConnectedPortal || ConnectedPortal.GetComponent<StrayPortalManager>().ConnectedPortal != this.gameObject)
         {
+            print(this.gameObject.name + " is looking for a gate");
             for (int i = 0; i < FindObjectsOfType<Transform>().Length; i++)
                 if (FindObjectsOfType<Transform>()[i] != transform && FindObjectsOfType<Transform>()[i].GetComponent<StrayPortalManager>() && FindObjectsOfType<Transform>()[i].GetComponent<StrayPortalManager>().ConnectedPortal == gameObject)
+                {
+                    print("gate found");
                     ConnectedPortal = FindObjectsOfType<Transform>()[i].gameObject;
+                }
+            //we can at this point assume that a gate will not be found, let's take appropriate action
+            GateNotFound();
         }
         else
         {
