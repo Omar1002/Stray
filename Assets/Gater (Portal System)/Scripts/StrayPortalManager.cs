@@ -541,7 +541,7 @@ public class StrayPortalManager : MonoBehaviour
                     Physics.IgnoreCollision(collision, PortalFunctionality.ExcludedObjsFromTrigger[i].Obj.GetComponent<Collider>(), true);
 
         //Increment and partially fill the arrays elements of required object for teleport
-        if (collision.gameObject != this.gameObject && !collision.GetComponent<StrayPortalManager>() && !collision.name.Contains(collision.gameObject.GetHashCode().ToString()) && !collision.name.Contains("Clone"))
+        if (collision.gameObject != this.gameObject && !collision.GetComponent<StrayPortalManager>() && !collision.name.Contains(collision.gameObject.GetHashCode().ToString()) && !collision.name.Contains("Clone")) //can't remove Clone from the name as it is used for TP validation
         {
             Array.Resize(ref CollidedObjs, CollidedObjs.Length + 1);
             Array.Resize(ref CollidedObjsInitName, CollidedObjsInitName.Length + 1);
@@ -627,7 +627,6 @@ public class StrayPortalManager : MonoBehaviour
 
     void OnTriggerStay(Collider collision)
     {
-        print("staying in portal");
         //Change position/rotation of required objects for teleport, and complete the fill of remaining arrays elements
         for (int i = 0; i < CollidedObjs.Length; i++)
         {
@@ -805,7 +804,7 @@ public class StrayPortalManager : MonoBehaviour
     {
         print("exiting portal");
         //Destroy required objects for teleport, reset relative arrays, and move original collided object to the its final position/rotation
-        for (int i = 0; i < CloneCollidedObjs.Length; i++)
+        for (int i = 0; i < CloneCollidedObjs.Length; i++) //the list it's making is not dynamic, the scripts are standardised, this might be another issue to keep in mind
         {
             if (ContinueTriggerEvents[i] && CollidedObjs[i] && CollidedObjs[i].GetHashCode().ToString() == collision.gameObject.GetHashCode().ToString() && CloneCollidedObjs[i])
             {
