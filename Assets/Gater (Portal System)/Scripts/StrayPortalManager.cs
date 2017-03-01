@@ -236,10 +236,10 @@ public class StrayPortalManager : MonoBehaviour
 
     void SetGate()
     {
-        if (!ConnectedPortal || ConnectedPortal.GetComponent<PortalManager>().ConnectedPortal != gameObject)
+        if (!ConnectedPortal || ConnectedPortal.GetComponent<StrayPortalManager>().ConnectedPortal != gameObject)
         {
             for (int i = 0; i < FindObjectsOfType<Transform>().Length; i++)
-                if (FindObjectsOfType<Transform>()[i] != transform && FindObjectsOfType<Transform>()[i].GetComponent<PortalManager>() && FindObjectsOfType<Transform>()[i].GetComponent<PortalManager>().ConnectedPortal == gameObject)
+                if (FindObjectsOfType<Transform>()[i] != transform && FindObjectsOfType<Transform>()[i].GetComponent<StrayPortalManager>() && FindObjectsOfType<Transform>()[i].GetComponent<StrayPortalManager>().ConnectedPortal == gameObject)
                     ConnectedPortal = FindObjectsOfType<Transform>()[i].gameObject;
         }
         else
@@ -386,8 +386,8 @@ public class StrayPortalManager : MonoBehaviour
                             }
                         }
 
-                        if (ConnectedPortal.GetComponent<PortalManager>().GateCamObjs[j])
-                            ConnectedPortal.GetComponent<PortalManager>().GateCamObjs[j].GetComponent<Skybox>().material = ViewSettings.Recursion.CustomFinalStep && (j > 0 && j == ViewSettings.Recursion.Steps) ? ViewSettings.Recursion.CustomFinalStep : (!ConnectedPortalSkybox && (j > 0 && j == ViewSettings.Recursion.Steps) ? NullConnectedPortalSkybox : ConnectedPortalSkybox);
+                        if (ConnectedPortal.GetComponent<StrayPortalManager>().GateCamObjs[j])
+                            ConnectedPortal.GetComponent<StrayPortalManager>().GateCamObjs[j].GetComponent<Skybox>().material = ViewSettings.Recursion.CustomFinalStep && (j > 0 && j == ViewSettings.Recursion.Steps) ? ViewSettings.Recursion.CustomFinalStep : (!ConnectedPortalSkybox && (j > 0 && j == ViewSettings.Recursion.Steps) ? NullConnectedPortalSkybox : ConnectedPortalSkybox);
                     }
                     else
                     {
@@ -533,6 +533,7 @@ public class StrayPortalManager : MonoBehaviour
 
     void OnTriggerEnter(Collider collision)
     {
+        print("entering portal");
         //Disable collision with objects excluded from trigger during teleport
         if (PortalFunctionality.ExcludedObjsFromTrigger.Length > 0)
             for (int i = 0; i < PortalFunctionality.ExcludedObjsFromTrigger.Length; i++)
@@ -540,7 +541,7 @@ public class StrayPortalManager : MonoBehaviour
                     Physics.IgnoreCollision(collision, PortalFunctionality.ExcludedObjsFromTrigger[i].Obj.GetComponent<Collider>(), true);
 
         //Increment and partially fill the arrays elements of required object for teleport
-        if (collision.gameObject != this.gameObject && !collision.GetComponent<PortalManager>() && !collision.name.Contains(collision.gameObject.GetHashCode().ToString()) && !collision.name.Contains("Clone"))
+        if (collision.gameObject != this.gameObject && !collision.GetComponent<StrayPortalManager>() && !collision.name.Contains(collision.gameObject.GetHashCode().ToString()) && !collision.name.Contains("Clone"))
         {
             Array.Resize(ref CollidedObjs, CollidedObjs.Length + 1);
             Array.Resize(ref CollidedObjsInitName, CollidedObjsInitName.Length + 1);
@@ -561,13 +562,13 @@ public class StrayPortalManager : MonoBehaviour
                 if (collision.transform.childCount > 0)
                 {
                     EnterTriggerTimes = 0;
-                    ConnectedPortal.GetComponent<PortalManager>().EnterTriggerTimes = 0;
+                    ConnectedPortal.GetComponent<StrayPortalManager>().EnterTriggerTimes = 0;
 
                     for (int j = 0; j < collision.GetComponentsInChildren<Transform>().Length; j++)
                         if (collision.GetComponentsInChildren<Transform>()[j] != collision.gameObject && collision.GetComponentsInChildren<Transform>()[j].GetComponent<Camera>())
                         {
                             CollidedObjsParentPreviousFirstPos = collision.GetComponentsInChildren<Transform>()[j].transform.localPosition;
-                            ConnectedPortal.GetComponent<PortalManager>().CollidedObjsParentPreviousFirstPos = collision.GetComponentsInChildren<Transform>()[j].transform.localPosition;
+                            ConnectedPortal.GetComponent<StrayPortalManager>().CollidedObjsParentPreviousFirstPos = collision.GetComponentsInChildren<Transform>()[j].transform.localPosition;
 
                             AcquireNextPos = true;
                             ConnectedPortal.GetComponent<StrayPortalManager>().AcquireNextPos = true;
@@ -576,7 +577,7 @@ public class StrayPortalManager : MonoBehaviour
                 if (!AcquireNextPos && collision.GetComponent<Camera>())
                 {
                     EnterTriggerTimes += 1;
-                    ConnectedPortal.GetComponent<PortalManager>().EnterTriggerTimes += 1;
+                    ConnectedPortal.GetComponent<StrayPortalManager>().EnterTriggerTimes += 1;
 
                     if (EnterTriggerTimes == 2)
                         CollidedObjsExternalParent = false;
@@ -586,7 +587,7 @@ public class StrayPortalManager : MonoBehaviour
                     if (collision.transform.childCount == 0 && collision.gameObject && collision.GetComponent<Camera>())
                     {
                         CollidedObjsParentPreviousSecondPos = collision.transform.localPosition;
-                        ConnectedPortal.GetComponent<PortalManager>().CollidedObjsParentPreviousSecondPos = collision.transform.localPosition;
+                        ConnectedPortal.GetComponent<StrayPortalManager>().CollidedObjsParentPreviousSecondPos = collision.transform.localPosition;
 
                         AcquireNextPos = false;
                         ConnectedPortal.GetComponent<StrayPortalManager>().AcquireNextPos = false;
@@ -626,6 +627,7 @@ public class StrayPortalManager : MonoBehaviour
 
     void OnTriggerStay(Collider collision)
     {
+        print("staying in portal");
         //Change position/rotation of required objects for teleport, and complete the fill of remaining arrays elements
         for (int i = 0; i < CollidedObjs.Length; i++)
         {
@@ -786,7 +788,7 @@ public class StrayPortalManager : MonoBehaviour
                                     CollidedObjs[i].GetComponent<MeshRenderer>().sharedMaterial.SetVector("_planePos", ClipPlanePosObj.transform.position);
                                     CollidedObjs[i].GetComponent<MeshRenderer>().sharedMaterial.SetVector("_planeNorm", Quaternion.Euler(transform.eulerAngles) * -DirectionVector);
 
-                                    CloneCollidedObjs[i].GetComponent<MeshRenderer>().sharedMaterial.SetVector("_planePos", ConnectedPortal.GetComponent<PortalManager>().ClipPlanePosObj.transform.position);
+                                    CloneCollidedObjs[i].GetComponent<MeshRenderer>().sharedMaterial.SetVector("_planePos", ConnectedPortal.GetComponent<StrayPortalManager>().ClipPlanePosObj.transform.position);
                                     CloneCollidedObjs[i].GetComponent<MeshRenderer>().sharedMaterial.SetVector("_planeNorm", Quaternion.Euler(ConnectedPortal.transform.eulerAngles) * -DirectionVector);
                                 }
                             }
@@ -801,6 +803,7 @@ public class StrayPortalManager : MonoBehaviour
 
     void OnTriggerExit(Collider collision)
     {
+        print("exiting portal");
         //Destroy required objects for teleport, reset relative arrays, and move original collided object to the its final position/rotation
         for (int i = 0; i < CloneCollidedObjs.Length; i++)
         {
@@ -915,12 +918,12 @@ public class StrayPortalManager : MonoBehaviour
         if (collision.transform.childCount == 0 && collision.GetComponent<Camera>())
         {
             CollidedObjsExternalParent = true;
-            ConnectedPortal.GetComponent<PortalManager>().CollidedObjsExternalParent = true;
+            ConnectedPortal.GetComponent<StrayPortalManager>().CollidedObjsExternalParent = true;
         }
         if (collision.transform.childCount > 0 && !collision.GetComponent<Camera>())
         {
             CollidedObjsExternalParent = false;
-            ConnectedPortal.GetComponent<PortalManager>().CollidedObjsExternalParent = false;
+            ConnectedPortal.GetComponent<StrayPortalManager>().CollidedObjsExternalParent = false;
         }
 
         //Enable collision with objects excluded from trigger during teleport
@@ -934,6 +937,7 @@ public class StrayPortalManager : MonoBehaviour
 
     void ResetVars(bool TriggerExit)
     {
+        print("resetting variables");
         bool SetVars = false;
 
         if (CollidedObjs.Length > 0)
