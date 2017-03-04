@@ -7,12 +7,14 @@ using UnityEditorInternal;
 using UnityEditor;
 #endif
 
+public enum PortalFunction { full, exit };
 [DisallowMultipleComponent]
 [ExecuteInEditMode]
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(Rigidbody))]
+
 
 public class StrayPortalManager : MonoBehaviour
 {
@@ -114,10 +116,12 @@ public class StrayPortalManager : MonoBehaviour
     [HideInInspector]
     public GameObject ClipPlanePosObj;
     private Vector2[] CurrentProjectionResolution;
-
+    [HideInInspector]
     public GameObject[] GateCamObjs;
     private int[] InitGateCamObjsCullingMask;
     private GameObject SceneviewRender;
+
+    public PortalFunction m_portalType;
 
     void OnEnable()
     {
@@ -222,20 +226,19 @@ public class StrayPortalManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        SetGate();
+        if (m_portalType == PortalFunction.full)
+            SetGate();
     }
 
     void LateUpdate()
     {
-        GateCamRepos();
+        if (m_portalType == PortalFunction.full)
+            GateCamRepos();
     }
 
     protected Camera InGameCamera;
     private RenderTexture TempRenTex;
     private Mesh GateMesh;
-
-    public Vector3 m_newPosition;
-    public Quaternion m_newRotation;
 
     void GateNotFound()
     {
@@ -451,13 +454,6 @@ public class StrayPortalManager : MonoBehaviour
 
     void GateCamRepos()
     {
-        //we use the first recursive camera as our new position
-        if (GateCamObjs[0])
-        {
-            m_newPosition = ConnectedPortal.transform.position;
-            m_newRotation = Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation);
-        }
-
         if (InGameCamera && ConnectedPortal)
         {
             Vector3[] GateCamPos = new Vector3[GateCamObjs.Length];
@@ -515,7 +511,8 @@ public class StrayPortalManager : MonoBehaviour
 
                             RenderTexture.active = GateCamObjs[j].GetComponent<Camera>().targetTexture;
 
-                            GateCamObjs[j].GetComponent<Camera>().Render();
+                            if (ConnectedPortal.GetComponent<StrayPortalManager>().m_portalType == PortalFunction.full)
+                                GateCamObjs[j].GetComponent<Camera>().Render();
 
                             Graphics.Blit(TempRenTex, RenTex[i]);
 
@@ -560,8 +557,8 @@ public class StrayPortalManager : MonoBehaviour
         //just tp the player to the final location...
         if (m_canTP)
         {
-            collision.transform.position = m_newPosition;
-            collision.transform.rotation = m_newRotation;
+            collision.transform.position = ConnectedPortal.transform.position;
+            collision.transform.rotation = Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation); ;
             ConnectedPortal.GetComponent<StrayPortalManager>().m_canTP = false;
             m_canTP = false;
         }
