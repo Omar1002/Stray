@@ -450,6 +450,10 @@ public class StrayPortalManager : MonoBehaviour
                     Debug.LogError("No collider component found");
             }
         }
+        if (m_portalType != PortalFunction.full)
+        {
+            SceneviewRender.SetActive(false); //deactivate portal visuals
+        }
     }
 
     void GateCamRepos()
@@ -470,9 +474,9 @@ public class StrayPortalManager : MonoBehaviour
                             //Move portal camera to position/rotation of Scene/Game camera
                             Camera SceneCamera = null;
 
-                            #if UNITY_EDITOR
+#if UNITY_EDITOR
                             SceneCamera = SceneView.GetAllSceneCameras().Length > 0 ? SceneView.GetAllSceneCameras()[0] : null;
-                            #endif
+#endif
 
                             GateCamObjs[j].GetComponent<Camera>().aspect = (i == 1 && SceneCamera ? SceneCamera.aspect : InGameCamera.aspect);
                             GateCamObjs[j].GetComponent<Camera>().fieldOfView = (i == 1 && SceneCamera ? SceneCamera.fieldOfView : InGameCamera.fieldOfView);
@@ -491,34 +495,36 @@ public class StrayPortalManager : MonoBehaviour
                             GateCamObjs[j].transform.localRotation = GateCamRot[j];
 
                             //Render portal camera and recursion to render texture
-                            if (j > 0 && j == ViewSettings.Recursion.Steps)
-                                GateCamObjs[j].GetComponent<Camera>().cullingMask = 0;
-                            else
-                            {
-                                GateCamObjs[j].GetComponent<Camera>().cullingMask = InGameCamera.cullingMask;
-
-                                for (int k = 0; k < PortalFunctionality.ExcludedObjsFromRender.Length; k++)
-                                    if (PortalFunctionality.ExcludedObjsFromRender[k].Obj)
-                                        GateCamObjs[j].GetComponent<Camera>().cullingMask &= ~(1 << PortalFunctionality.ExcludedObjsFromRender[k].Layer);
-
-                                if (i == 0)
-                                    GateCamObjs[j].GetComponent<Camera>().cullingMask &= ~(1 << 4);
-                                else
-                                    GateCamObjs[j].GetComponent<Camera>().cullingMask &= ~(1 << 1);
-                            }
-
-                            GateCamObjs[j].GetComponent<Camera>().targetTexture = TempRenTex;
-
-                            RenderTexture.active = GateCamObjs[j].GetComponent<Camera>().targetTexture;
-
                             if (ConnectedPortal.GetComponent<StrayPortalManager>().m_portalType == PortalFunction.full)
+                            {
+                                if (j > 0 && j == ViewSettings.Recursion.Steps)
+                                    GateCamObjs[j].GetComponent<Camera>().cullingMask = 0;
+                                else
+                                {
+                                    GateCamObjs[j].GetComponent<Camera>().cullingMask = InGameCamera.cullingMask;
+
+                                    for (int k = 0; k < PortalFunctionality.ExcludedObjsFromRender.Length; k++)
+                                        if (PortalFunctionality.ExcludedObjsFromRender[k].Obj)
+                                            GateCamObjs[j].GetComponent<Camera>().cullingMask &= ~(1 << PortalFunctionality.ExcludedObjsFromRender[k].Layer);
+
+                                    if (i == 0)
+                                        GateCamObjs[j].GetComponent<Camera>().cullingMask &= ~(1 << 4);
+                                    else
+                                        GateCamObjs[j].GetComponent<Camera>().cullingMask &= ~(1 << 1);
+                                }
+
+                                GateCamObjs[j].GetComponent<Camera>().targetTexture = TempRenTex;
+
+                                RenderTexture.active = GateCamObjs[j].GetComponent<Camera>().targetTexture;
+
                                 GateCamObjs[j].GetComponent<Camera>().Render();
 
-                            Graphics.Blit(TempRenTex, RenTex[i]);
+                                Graphics.Blit(TempRenTex, RenTex[i]);
 
-                            RenderTexture.active = null;
+                                RenderTexture.active = null;
 
-                            GateCamObjs[j].GetComponent<Camera>().targetTexture = null;
+                                GateCamObjs[j].GetComponent<Camera>().targetTexture = null;
+                            }
                         }
                     }
                 }
@@ -558,7 +564,8 @@ public class StrayPortalManager : MonoBehaviour
         if (m_canTP)
         {
             collision.transform.position = ConnectedPortal.transform.position;
-            collision.transform.rotation = Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation); ;
+            //InGameCamera.transform.rotation = Quaternion.Euler(new Vector3(10.0f, 10.0f, 10.0f));//Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation);
+            //collision.transform.rotation = Quaternion.AngleAxis(180.0f, new Vector3(0, 1, 0)) * GateCamObjs[0].transform.rotation;
             ConnectedPortal.GetComponent<StrayPortalManager>().m_canTP = false;
             m_canTP = false;
         }
