@@ -450,7 +450,7 @@ public class StrayPortalManager : MonoBehaviour
                     Debug.LogError("No collider component found");
             }
         }
-        if (m_portalType != PortalFunction.full)
+        if (m_portalType != PortalFunction.full && SceneviewRender != null)
         {
             SceneviewRender.SetActive(false); //deactivate portal visuals
         }
@@ -558,16 +558,20 @@ public class StrayPortalManager : MonoBehaviour
 
     void OnTriggerEnter(Collider collision)
     {
-        print("entering portal");
-
-        //just tp the player to the final location...
-        if (m_canTP)
+        if (m_portalType == PortalFunction.full)
         {
-            collision.transform.position = ConnectedPortal.transform.position;
-            //InGameCamera.transform.rotation = Quaternion.Euler(new Vector3(10.0f, 10.0f, 10.0f));//Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation);
-            //collision.transform.rotation = Quaternion.AngleAxis(180.0f, new Vector3(0, 1, 0)) * GateCamObjs[0].transform.rotation;
-            ConnectedPortal.GetComponent<StrayPortalManager>().m_canTP = false;
-            m_canTP = false;
+            print("entering portal");
+
+            //just tp the player to the final location...
+            if (m_canTP)
+            {
+                print("TP");
+                collision.transform.position = ConnectedPortal.transform.position;
+                //InGameCamera.transform.rotation = Quaternion.Euler(new Vector3(10.0f, 10.0f, 10.0f));//Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation);
+                //collision.transform.rotation = Quaternion.AngleAxis(180.0f, new Vector3(0, 1, 0)) * GateCamObjs[0].transform.rotation;
+                ConnectedPortal.GetComponent<StrayPortalManager>().m_canTP = false;
+                m_canTP = false;
+            }
         }
     }
 
