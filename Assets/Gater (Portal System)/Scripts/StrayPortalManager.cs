@@ -568,7 +568,7 @@ public class StrayPortalManager : MonoBehaviour
             if (m_canTP && collision.tag == "Player")
             {
                 print("TP");
-                
+                FindObjectOfType<ScreenFader>().FadeIn();
                 collision.transform.position = ConnectedPortal.transform.position;
                 Debug.Log("Should be able to act upon player");
                 collision.GetComponentInChildren<FirstPersonController>().m_updateRotation = false;
