@@ -5,6 +5,7 @@ using System.Collections;
 #if UNITY_EDITOR
 using UnityEditorInternal;
 using UnityEditor;
+using UnityStandardAssets.Characters.FirstPerson;
 #endif
 
 public enum PortalFunction { full, exit };
@@ -14,6 +15,7 @@ public enum PortalFunction { full, exit };
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(Rigidbody))]
+
 
 
 public class StrayPortalManager : MonoBehaviour
@@ -563,12 +565,17 @@ public class StrayPortalManager : MonoBehaviour
             print("entering portal");
 
             //just tp the player to the final location...
-            if (m_canTP)
+            if (m_canTP && collision.tag == "Player")
             {
                 print("TP");
+                
                 collision.transform.position = ConnectedPortal.transform.position;
-                //InGameCamera.transform.rotation = Quaternion.Euler(new Vector3(10.0f, 10.0f, 10.0f));//Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation);
-                //collision.transform.rotation = Quaternion.AngleAxis(180.0f, new Vector3(0, 1, 0)) * GateCamObjs[0].transform.rotation;
+                Debug.Log("Should be able to act upon player");
+                collision.GetComponentInChildren<FirstPersonController>().m_updateRotation = false;
+                collision.transform.rotation = Quaternion.Inverse(ConnectedPortal.transform.rotation) * (InGameCamera.transform.rotation);
+                collision.GetComponentInChildren<FirstPersonController>().m_MouseLook.Init(collision.transform, InGameCamera.transform);
+
+
                 ConnectedPortal.GetComponent<StrayPortalManager>().m_canTP = false;
                 m_canTP = false;
             }
@@ -583,6 +590,7 @@ public class StrayPortalManager : MonoBehaviour
     void OnTriggerExit(Collider collision)
     {
         print("exiting portal");
+        collision.GetComponentInChildren<FirstPersonController>().m_updateRotation = true;
         m_canTP = true;
     }
 }
