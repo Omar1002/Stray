@@ -8,6 +8,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (CapsuleCollider))]
     public class RigidbodyFirstPersonController : MonoBehaviour
     {
+        public bool m_updateRotation = true;
+
         [Serializable]
         public class MovementSettings
         {
@@ -128,7 +130,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void Update()
         {
-            RotateView();
+            if (m_updateRotation) { RotateView(); }
 
             if (CrossPlatformInputManager.GetButtonDown("Jump") && !m_Jump)
             {
